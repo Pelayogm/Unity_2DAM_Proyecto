@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using Armeria;
 using Funciones.Partida;
 
 namespace Armas
@@ -23,6 +24,9 @@ namespace Armas
             haChocado = true;
             GetComponent<Collider>().enabled = false;
             
+            int arma = DataUsuario.armaActual;
+            int nivelActual = DataUsuario.nivelesPotencia[arma];
+            
             switch (collision.gameObject.tag)
             {
                 case "Enemigo_Pesado":
@@ -30,7 +34,7 @@ namespace Armas
                     EnemigoDefecto estadisticasPorDefecto = collision.gameObject.GetComponent<EnemigoDefecto>();
                     if (estadisticasPorDefecto != null)
                     {
-                        estadisticasPorDefecto.recibirImpacto(50);
+                        estadisticasPorDefecto.recibirImpacto(25 * nivelActual);
                         Destroy(gameObject, 1f);
                         //print("Le has pegao 50");
                     }
@@ -43,7 +47,7 @@ namespace Armas
                     EnemigoDefecto estadisticasPorDefecto = collision.gameObject.GetComponent<EnemigoDefecto>();
                     if (estadisticasPorDefecto != null)
                     {
-                        estadisticasPorDefecto.recibirImpacto(75);
+                        estadisticasPorDefecto.recibirImpacto(45 * nivelActual);
                         Destroy(gameObject, 1f);
                         //print("Le has pegao 75");
                     }
@@ -55,7 +59,7 @@ namespace Armas
                     EnemigoDefecto estadisticasPorDefecto = collision.gameObject.GetComponent<EnemigoDefecto>();
                     if (estadisticasPorDefecto != null)
                     {
-                        estadisticasPorDefecto.recibirImpacto(100);
+                        estadisticasPorDefecto.recibirImpacto(60 * nivelActual);
                         //print("Le has pegao 100");
                         Destroy(gameObject, 1f);
                     }

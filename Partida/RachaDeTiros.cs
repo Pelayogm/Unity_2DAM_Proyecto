@@ -6,14 +6,16 @@ using UnityEngine;
 public class RachaDeTiros : MonoBehaviour
 {
     public int rachaActual;
-    public GameObject impactoTexto;
+    private int ultimaRachaProcesada = 0;
     float tiempoReincioRacha = 5f;
-    
+
+    //UI
+    public GameObject impactoTexto;
     public GameObject eliminacionTexto;
     public GameObject rachaTextoObjeto;
     public TextMeshProUGUI rachaTexto;
-    
-    //SINGLETON
+
+    // SINGLETON
     public static RachaDeTiros Instance { get; private set; }
 
     void Awake()
@@ -21,6 +23,7 @@ public class RachaDeTiros : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -29,88 +32,93 @@ public class RachaDeTiros : MonoBehaviour
     }
 
     public void impactoEnEnemigo()
-    { 
+    {
         impactoTexto.SetActive(true);
         StartCoroutine(esperar(impactoTexto));
         tiempoReincioRacha += 4f;
     }
 
+    public void eliminacion()
+    {
+        rachaActual++;
+        eliminacionTexto.SetActive(true);
+        StartCoroutine(esperar(eliminacionTexto));
+        tiempoReincioRacha += 15f;
+        ProcesarRacha();
+    }
+
     public void reiniciarRacha()
     {
         rachaActual = 0;
+        ultimaRachaProcesada = 0;
         tiempoReincioRacha = 0f;
     }
 
     private IEnumerator esperar(GameObject objeto)
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(1f);
         objeto.SetActive(false);
     }
-    
-    public void eliminacion()
-    {
-        rachaActual = rachaActual + 1;
-        eliminacionTexto.SetActive(true);
-        StartCoroutine(esperar(eliminacionTexto));
-        tiempoReincioRacha += 15f;
-        print(rachaActual);
-    }
 
-    //Arreglar lo de los puntos suman infinitamente puntos por el bucle al estar en Update()
     void Update()
     {
-        if (tiempoReincioRacha >= 0)
+        // Decrementamos con independencia de fps
+        tiempoReincioRacha -= Time.deltaTime;
+
+        if (tiempoReincioRacha > 0f)
         {
             rachaTextoObjeto.SetActive(true);
         }
-        
-        if (tiempoReincioRacha <= 0)
+        else
         {
-            rachaTextoObjeto.SetActive(false);
-            rachaActual = 0;
-        }
-        tiempoReincioRacha -= 0.01f;
-
-        if (rachaActual == 0) {
-            rachaTexto.SetText("");
-        }
-
-        if (rachaActual == 1)
-        {
-            rachaTexto.SetText("Enemigo Eliminado");
-            
-        }
-        
-        if (rachaActual == 2)
-        {
-            rachaTexto.SetText("Eliminación doble");
-            PuntuacionManager.Instance.aumentarPuntuacion(125);
-        }
-        
-        if (rachaActual == 3)
-        {
-            rachaTexto.SetText("Eliminación triple");
-            PuntuacionManager.Instance.aumentarPuntuacion(250);
-        }
-        
-        if (rachaActual == 4)
-        {
-            rachaTexto.SetText("Enemigos Arrasados");
-            PuntuacionManager.Instance.aumentarPuntuacion(430);
-        }
-        
-        if (rachaActual == 5)
-        {
-            rachaTexto.SetText("Dominación total");
-            PuntuacionManager.Instance.aumentarPuntuacion(600);
-        }
-        
-        if (rachaActual == 6)
-        {
-            rachaTexto.SetText("Eliminación maestra");
-            PuntuacionManager.Instance.aumentarPuntuacion(800);
+            ResetRacha();
         }
     }
-    
-    
+
+    private void ProcesarRacha()
+    {
+        // Solo procesamos cada nivel de racha una vez
+        if (rachaActual == ultimaRachaProcesada) return;
+        ultimaRachaProcesada = rachaActual;
+        rachaTextoObjeto.SetActive(true);
+
+        switch (rachaActual)
+        {
+            case 0:
+                rachaTexto.SetText("");
+                break;
+            case 1:
+                rachaTexto.SetText("Enemigo Eliminado");
+                break;
+            case 2:
+                rachaTexto.SetText("Eliminación doble");
+                PuntuacionManager.Instance.aumentarPuntuacion(125);
+                break;
+            case 3:
+                rachaTexto.SetText("Eliminación triple");
+                PuntuacionManager.Instance.aumentarPuntuacion(250);
+                break;
+            case 4:
+                rachaTexto.SetText("Enemigos Arrasados");
+                PuntuacionManager.Instance.aumentarPuntuacion(430);
+                break;
+            case 5:
+                rachaTexto.SetText("Dominación total");
+                PuntuacionManager.Instance.aumentarPuntuacion(600);
+                break;
+            case 6:
+                rachaTexto.SetText("Eliminación maestra");
+                PuntuacionManager.Instance.aumentarPuntuacion(800);
+                break;
+        }
+    }
+
+    private void ResetRacha()
+    {
+        rachaActual = 0;
+        ultimaRachaProcesada = 0;
+        tiempoReincioRacha = 0f;
+        rachaTextoObjeto.SetActive(false);
+        rachaTexto.SetText("");
+    }
 }

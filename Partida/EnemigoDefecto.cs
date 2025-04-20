@@ -15,7 +15,12 @@ namespace Funciones.Partida
             if (salud > 0)
             {
                 salud -= cantidad;
-                barraVida.Impactar(cantidad);
+                
+                if (barraVida != null)
+                {
+                    barraVida.Impactar(cantidad);
+                }
+
                 RachaDeTiros.Instance.impactoEnEnemigo();
                 PuntuacionManager.Instance.aumentarPuntuacion(25);
                 

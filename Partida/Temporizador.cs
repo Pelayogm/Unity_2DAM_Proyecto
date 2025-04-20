@@ -1,3 +1,4 @@
+using Funciones.Partida;
 using TMPro;
 using UnityEngine;
 
@@ -27,6 +28,7 @@ namespace Funciones
                temporizador.color = Color.red;
                pararPartida();
                popUpFinal.SetActive(true);
+               PuntuacionManager.Instance.calcularCreditos();
            }
            
            int minutes = Mathf.FloorToInt(tiempoRestante / 60);
