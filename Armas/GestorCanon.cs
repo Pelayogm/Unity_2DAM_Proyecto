@@ -1,4 +1,5 @@
 using System;
+using Armeria;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,18 +18,26 @@ namespace Armas
 
         void Update()
         {
-            float tiempoTranscurrido = Time.time - ultimoEnfriamiento;
-            recargaSlider.value = Mathf.Clamp01(tiempoTranscurrido / tiempoEnfriamiento);
+            //Busamos el nivel de cadencia del arma actual
+            int arma = DataUsuario.armaActual;
+            int nivelCadencia = DataUsuario.nivelesCadencia[arma];
             
-            //Si se pulsa el espacio y el tiempo desde el último disparo supera el tiempo de enfriamiento.
-            if (Input.GetKeyDown(KeyCode.Space) && Time.time > ultimoEnfriamiento + tiempoEnfriamiento)
+            float factorCadencia = 1f + nivelCadencia * 0.1f;
+            
+            float tiempoEnfriamientoAjustado = tiempoEnfriamiento / factorCadencia;
+            tiempoEnfriamientoAjustado = Mathf.Max(0.1f, tiempoEnfriamientoAjustado);
+
+            //Actualizamos el slider
+            float tiempoTranscurrido = Time.time - ultimoEnfriamiento;
+            recargaSlider.value = Mathf.Clamp01(tiempoTranscurrido / tiempoEnfriamientoAjustado);
+            
+            if (Input.GetKeyDown(KeyCode.Space) && Time.time > ultimoEnfriamiento + tiempoEnfriamientoAjustado)
             {
-                //Se llama a disparar
                 Disparar();
                 ultimoEnfriamiento = Time.time;
             }
-            
         }
+
 
         void Disparar()
         {

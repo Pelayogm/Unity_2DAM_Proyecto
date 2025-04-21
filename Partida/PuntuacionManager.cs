@@ -46,6 +46,7 @@ namespace Funciones.Partida
             puntuacionUI.text = _puntuacionPartida.ToString();
             puntuacionFinalPopUp.text = _puntuacionPartida.ToString();
             creditosPopUp.text = _creditos.ToString();
+            DataUsuario.guardarDatos();
         }
     }
 }
