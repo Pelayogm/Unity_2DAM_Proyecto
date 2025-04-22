@@ -33,6 +33,7 @@ namespace Funciones.Partida
             int arma = DataUsuario.armaActual;
             int nivelActual = DataUsuario.nivelesSuerte[arma];
             _creditos = (_puntuacionPartida / 100) * nivelActual;
+            print(_creditos);
             DataUsuario.creditos += _creditos;
         }
         
