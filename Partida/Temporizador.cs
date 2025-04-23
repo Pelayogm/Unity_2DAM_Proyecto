@@ -56,5 +56,9 @@ namespace Funciones
            movimientoJugador.canMove = true;
        }
        
+       public float getTiempoRestante()
+       {
+           return tiempoRestante;
+       }
     }
 }

@@ -43,12 +43,7 @@ namespace Menu
         {
             abrirArmeria();
         }
-
-        public void abrirClasificacion()
-        {
-            
-        }
-
+        
         private void Update()
         {
             textoMonedas.text = DataUsuario.creditos.ToString();
