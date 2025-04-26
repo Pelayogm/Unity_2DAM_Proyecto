@@ -7,6 +7,7 @@ namespace Menu {
         public GameObject panelAjustes;
         public GameObject panelAjustes_2;
         public GameObject panelClasificacion;
+        public GameObject tutorial;
         public Animator animacion;
 
         void Start()
@@ -66,6 +67,22 @@ namespace Menu {
             {
                 panelClasificacion.SetActive(false);
                 animacion.enabled = true;
+            }
+        }
+        
+        public void abrirTutorial()
+        {
+            if (!tutorial.activeSelf)
+            {
+                tutorial.SetActive(true);
+            }
+        }
+        
+        public void cerrarTutorial()
+        {
+            if (tutorial.activeSelf)
+            {
+                tutorial.SetActive(false);
             }
         }
         

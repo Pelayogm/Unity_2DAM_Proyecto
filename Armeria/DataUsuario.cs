@@ -34,7 +34,7 @@ namespace Armeria
         { 0, 25, 70, 100, 200 },
         { 0, 15, 30, 100, 200 },
         { 0, 25, 50, 110, 200 },
-        { 0, 25, 40, 100, 200 }};
+        { 0, 80, 130, 180, 300 }};
         
         //Array para saberlas mejoras de las armas
         public static int [] nivelesCadencia = { 1, 1, 1, 1, 1 };
