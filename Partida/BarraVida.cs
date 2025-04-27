@@ -48,6 +48,13 @@ namespace Funciones.Partida
             vida = Mathf.Clamp(vida + cantidad, 0, maxVida);
             Update();
         }
+
+        public void resetBarraVidaEnemigo(float cantidad)
+        {
+            vida = Mathf.Clamp(cantidad, 0, maxVida);
+            slider.value = vida;
+            slider2.value = vida;
+        }
     
     }
 

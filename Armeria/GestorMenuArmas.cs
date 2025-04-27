@@ -34,6 +34,10 @@ public class GestorMenuArmas : MonoBehaviour
         //Barra de arriba
         DataUsuario.cargarDatos();
         t_creditos.text = DataUsuario.creditos.ToString();
+        
+        DataUsuario.armaActual = 0;
+        escogerArma(0);
+        
         n_arma.text = DataUsuario.nombresArmas[0];
         descripcionArma.text = DataUsuario.descripcionesArmas[0];
 

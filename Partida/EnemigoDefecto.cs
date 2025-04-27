@@ -98,6 +98,7 @@ namespace Funciones.Partida
             }
         }
         
+        //Método que sirve para calcular la curación progresiva de los enemigos cuando quedan varia el comportamiento
         private IEnumerator CurarProgresivo()
         {
             var porcentaje = UnityEngine.Random.Range(0f, _maxPorcentajeCuracion);
@@ -113,8 +114,11 @@ namespace Funciones.Partida
                 yield return new WaitForSeconds(_intervalo);
                 var restante = cantidadTotal - curadoAcumulado;
                 var curacionTick = Mathf.Min(porPaso, restante);
+                
                 salud = Mathf.Min(salud + curacionTick, saludInicial);
                 curadoAcumulado += curacionTick;
+                
+                //Se actualiza la barra de vida, para que se refleje en partida
                 barraVida.Curar(curacionTick);
             }
         }
@@ -139,13 +143,68 @@ namespace Funciones.Partida
             
             if (salud <= 0)
             {
-                desactivar();
+                //desactivar();
+                StartCoroutine(reactivarEnemigo());
                 RachaDeTiros.Instance.eliminacion();
                 PuntuacionManager.Instance.aumentarPuntuacion(100);
             }
-            
         }
 
+        private IEnumerator reactivarEnemigo()
+        {
+            //Desactivamos los renderer del enemigo, para que desaparezca de la pantalla.
+            var renderer = enemigo.GetComponentInChildren<Renderer>();
+            
+            //Desactivamos la barra de vida para que no salga flotando en rojo y que impacten balas con ella
+            barraVida.slider.gameObject.SetActive(false);
+            barraVida.slider2.gameObject.SetActive(false);
+            
+            //Y desactivamos el collider para que no haya un "impacto fantasma" con el enemigo.
+            var collider = enemigo.GetComponent<Collider>();
+
+            if (renderer is not null)
+            {
+                renderer.enabled = false;
+            }
+            
+
+            if (collider is not null)
+            {
+                collider.enabled = false;
+            }
+            
+            //Intervalo de espera para reaparecer al enemigo otra vez.
+            var enfriamiento = UnityEngine.Random.Range(3f, 12f);
+            yield return new WaitForSeconds(enfriamiento);
+
+            //Le ponemos su vida como al inicio de la partida.
+            salud = saludInicial;
+            //Y llamamos al método de resetBarraVidaEnemigo() de la barra de vida con toda la vida del enemigo, para que la
+            //barra de vida aparezca llena cuando el enemigo reaparezca.
+            barraVida.resetBarraVidaEnemigo(salud);
+            
+            //Si el enemigo tenía animación y la estaba haciendo, volvemos a dejarlo como estaba.
+            if (TryGetComponent<Animator>(out var anim))
+            {
+                anim.enabled = originalenemigoTeniaAnimacion;
+                anim.speed = 1f;
+            }
+            
+            //Reactivamos los colliders, renderer y la barra de vida y entonces vuelve a aparecer.
+            if (renderer is not null)
+            {
+                renderer.enabled = true;
+            }
+            
+
+            if (collider is not null)
+            {
+                collider.enabled = true;
+            }
+            barraVida.slider.gameObject.SetActive(true);
+            barraVida.slider2.gameObject.SetActive(true);
+        }
+        
         private void desactivar()
         {
             Destroy(enemigo);
