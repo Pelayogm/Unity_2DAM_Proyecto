@@ -8,6 +8,7 @@ namespace Armas
 {
     public class MostrarNombre : MonoBehaviour
     {
+        [Header("IU")]
         public GameObject[] armas;
         public String[] nombreArmas;
         public TextMeshProUGUI textoPantalla;

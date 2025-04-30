@@ -7,6 +7,8 @@ namespace Armas
 {
     public class ImpactoCanon : MonoBehaviour
     {
+        //Los enemigos se dividen por las 3 clases que hay diferenciadas de enemigos.
+        //Según el tipo el "switch" diferencia y clasifica la colisión.
         private void OnCollisionEnter(Collision collision)
         {
             switch (collision.gameObject.tag)

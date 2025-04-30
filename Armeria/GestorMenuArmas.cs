@@ -9,24 +9,21 @@ using UnityEngine.SceneManagement;
 
 public class GestorMenuArmas : MonoBehaviour
 {
-    //Array de los modelos de las armas disponibles.
+    [Header("Armas de la armería")]
     public GameObject [] armasDisponibles;
     
-    //Menu Estadisticas (UI)
+    [Header("IU Texto")]
     public Slider potenciaSlider, cadenciaSlider, direccionSlider;
     public TMP_Text p_potencia, p_cadencia, p_direccion, p_arma, n_arma;
     public GameObject estadisticasBloqueadas, estadisticasDesbloqueadas;
     public TMP_Text descripcionArma;
     
-    //Menu Barra de Abajo
+    [Header("IU GameObjects")]
     public GameObject[] candados;
-    
-    //Botones de la UI para comprar un arma o desactivarlo
     public GameObject botonComprar, botonEscoger;
-    
-    //Barra de Arriba
     public TMP_Text t_creditos;
-    //PopUps
+    
+    [Header("IU Pop-Ups")]
     public GameObject comprarArmaPopUP, faltanMonedasPopUP;
     
     public void Start()

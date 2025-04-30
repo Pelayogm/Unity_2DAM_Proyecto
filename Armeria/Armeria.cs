@@ -24,10 +24,5 @@ namespace Armeria
             }
             
         }
-
-        void Update()
-        {
-            
-        }
     }
 }
