@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using System.IO;
 using System.Data;
 using Mono.Data.Sqlite;
+using UnityEngine.UI;
 
 namespace Funciones.BBDD
 {
@@ -11,6 +13,10 @@ namespace Funciones.BBDD
         public static BBDDManager Instance { get; private set; }
         
         private string _connectionString;
+        private List<Puntuacion> puntuaciones = new List<Puntuacion>();
+
+        public GameObject registroPuntuacionGameObject;
+        [SerializeField] public Transform tablaPadre;
 
         private void Awake()
         {
@@ -38,25 +44,28 @@ namespace Funciones.BBDD
 
             //insertarPuntuacion(100, "Rober", "GANCHIILLO");
             GetPuntuaciones();
+            mostrarPuntuaciones();
         }
 
         public void GetPuntuaciones()
         {
+            puntuaciones.Clear();
             using (IDbConnection dbConexion = new SqliteConnection(_connectionString))
             {
                 dbConexion.Open();
                 using (IDbCommand comando = dbConexion.CreateCommand())
                 {
-                    comando.CommandText = "SELECT * FROM CLASIFICACION";
+                    comando.CommandText = "SELECT * FROM CLASIFICACION CLA ORDER BY CLA.PUNTUACION DESC;";
                     using (IDataReader lector = comando.ExecuteReader())
                     {
                         while (lector.Read())
                         {
-                            Debug.Log(lector.GetString(3));
+                            Puntuacion puntuacionActual = new Puntuacion(lector.GetInt32(0),
+                                lector.GetInt32(1), lector.GetString(2), lector.GetString(3));
+                            puntuaciones.Add(puntuacionActual);
                         }
-                        
-                        dbConexion.Close();
                         lector.Close();
+                        dbConexion.Close();
                     }
                 }
             }
@@ -89,8 +98,8 @@ namespace Funciones.BBDD
                     comando.Parameters.Add(param3);
 
                     comando.ExecuteNonQuery();
-                    dbConexion.Close();
                 }
+                dbConexion.Close();
             }   
         }
 
@@ -104,7 +113,31 @@ namespace Funciones.BBDD
                     comando.CommandText = "DELETE FROM CLASIFICACION";
                     comando.ExecuteNonQuery();
                 }
+                conexion.Close();
             }
         }
+        
+        public void mostrarPuntuaciones()
+        {
+            foreach (Transform t in tablaPadre) Destroy(t.gameObject);
+            puntuaciones.Clear();
+            GetPuntuaciones();
+            
+            for (int i = 0; i < puntuaciones.Count; i++)
+            {
+                var datoActual = puntuaciones[i];
+                GameObject gameObject = Instantiate(registroPuntuacionGameObject, tablaPadre, false);
+                
+                gameObject.GetComponent<PuntuacionMapper>()
+                    .setPuntuacion("#" + (i + 1),
+                        datoActual.puntuacion.ToString(),
+                        datoActual.nombreJugador,
+                        datoActual.nombreArmaUsada);
+                
+                gameObject.transform.SetAsLastSibling();
+            }
+            LayoutRebuilder.ForceRebuildLayoutImmediate(tablaPadre.GetComponent<RectTransform>());
+        }
+
     }
 }

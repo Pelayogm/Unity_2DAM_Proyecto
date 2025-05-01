@@ -1,3 +1,5 @@
+using System.Collections;
+using Funciones.BBDD;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -58,8 +60,21 @@ namespace Menu {
             {
                 panelClasificacion.SetActive(true);
                 animacion.enabled = false;
+                // Espera un frame para que el layout del panel esté activo
+                StartCoroutine(InvokeNextFrame(() =>
+                {
+                    BBDDManager.Instance.mostrarPuntuaciones();
+                }));
             }
         }
+
+// Helper coroutine
+        private IEnumerator InvokeNextFrame(System.Action a)
+        {
+            yield return null;
+            a();
+        }
+
         
         public void cerrarClasificacion()
         {
