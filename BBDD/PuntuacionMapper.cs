@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Funciones.BBDD
@@ -12,23 +13,22 @@ namespace Funciones.BBDD
 
         public void setPuntuacion(string posicionInt, string puntuacionStr, string nombreJugadorStr, string armaJugadorStr)
         {
-            // Valores por defecto si vienen null o vacíos
             string posText  = string.IsNullOrEmpty(posicionInt)     ? "1"             : posicionInt;
             string puntText = string.IsNullOrEmpty(puntuacionStr)   ? "sin registros" : puntuacionStr;
             string nomText  = string.IsNullOrEmpty(nombreJugadorStr) ? "no conocido"   : nombreJugadorStr;
             string armaText = string.IsNullOrEmpty(armaJugadorStr)   ? "sin arma"      : armaJugadorStr;
 
             // Asignación directa con null-propagation
-            var txt = posicion?.GetComponent<Text>();
+            var txt = posicion?.GetComponent<TextMeshProUGUI>();
             if (txt != null) txt.text = posText + "º";
 
-            txt = puntuacionJugador?.GetComponent<Text>();
+            txt = puntuacionJugador?.GetComponent<TextMeshProUGUI>();
             if (txt != null) txt.text = puntText;
 
-            txt = nombreJugador?.GetComponent<Text>();
+            txt = nombreJugador?.GetComponent<TextMeshProUGUI>();
             if (txt != null) txt.text = nomText;
 
-            txt = armaJugador?.GetComponent<Text>();
+            txt = armaJugador?.GetComponent<TextMeshProUGUI>();
             if (txt != null) txt.text = armaText;
         }
     }

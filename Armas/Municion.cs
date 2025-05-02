@@ -7,7 +7,7 @@ namespace Armas
 {
     public class Municion : MonoBehaviour
     {
-        float tiempoVida = 5f;
+        float tiempoVida = 2.5f;
         float gravedad = 2f;
         private Rigidbody rb;
         private bool haChocado = false;
@@ -47,7 +47,7 @@ namespace Armas
                     EnemigoDefecto estadisticasPorDefecto = collision.gameObject.GetComponent<EnemigoDefecto>();
                     if (estadisticasPorDefecto != null)
                     {
-                        estadisticasPorDefecto.recibirImpacto(45 * nivelActual);
+                        estadisticasPorDefecto.recibirImpacto(35 * nivelActual);
                         Destroy(gameObject, 1f);
                         //print("Le has pegao 75");
                     }
@@ -59,7 +59,7 @@ namespace Armas
                     EnemigoDefecto estadisticasPorDefecto = collision.gameObject.GetComponent<EnemigoDefecto>();
                     if (estadisticasPorDefecto != null)
                     {
-                        estadisticasPorDefecto.recibirImpacto(60 * nivelActual);
+                        estadisticasPorDefecto.recibirImpacto(45 * nivelActual);
                         //print("Le has pegao 100");
                         Destroy(gameObject, 1f);
                     }

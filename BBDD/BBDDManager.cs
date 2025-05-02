@@ -49,6 +49,7 @@ namespace Funciones.BBDD
 
         public void GetPuntuaciones()
         {
+            foreach (Transform t in tablaPadre) Destroy(t.gameObject);
             puntuaciones.Clear();
             using (IDbConnection dbConexion = new SqliteConnection(_connectionString))
             {
@@ -119,14 +120,13 @@ namespace Funciones.BBDD
         
         public void mostrarPuntuaciones()
         {
-            foreach (Transform t in tablaPadre) Destroy(t.gameObject);
             puntuaciones.Clear();
             GetPuntuaciones();
             
             for (int i = 0; i < puntuaciones.Count; i++)
             {
                 var datoActual = puntuaciones[i];
-                GameObject gameObject = Instantiate(registroPuntuacionGameObject, tablaPadre, false);
+                GameObject gameObject = Instantiate(registroPuntuacionGameObject);
                 
                 gameObject.GetComponent<PuntuacionMapper>()
                     .setPuntuacion("#" + (i + 1),
@@ -134,9 +134,10 @@ namespace Funciones.BBDD
                         datoActual.nombreJugador,
                         datoActual.nombreArmaUsada);
                 
-                gameObject.transform.SetAsLastSibling();
+                gameObject.transform.SetParent(tablaPadre);
             }
-            LayoutRebuilder.ForceRebuildLayoutImmediate(tablaPadre.GetComponent<RectTransform>());
+
+            //gameObject.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
         }
 
     }
