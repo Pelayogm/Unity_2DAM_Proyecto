@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Armeria;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -26,7 +27,7 @@ namespace Armas
 
         [Header("Cámara del jugador")]
         public Camera playerCamera;
-
+        
         public static Action disparoUsuario;
 
         private bool isRecargando = false;
@@ -64,7 +65,10 @@ namespace Armas
 
                     // Si se acaban, iniciar recarga
                     if (balasRestantes <= 0)
-                        StartCoroutine(RecargarAutomatica());
+                    {
+                        StartCoroutine(RecargarAutomatica());  
+                    }
+                        
                 }
             }
         }
@@ -84,21 +88,32 @@ namespace Armas
         private IEnumerator RecargarAutomatica()
         {
             isRecargando = true;
-            float elapsed = 0f;
+            
+            var arma = DataUsuario.armaActual;
+            var nivel = DataUsuario.nivelesCadencia[arma];
+            
+            var factor = 1f + nivel * 0.1f;
+            var tiempoAjustado = Mathf.Max(0.1f, tiempoRecarga / factor);
+            
+            var duracionRecarga = 0f;
 
             // Slider muestra progreso de 0 → 1 durante la recarga
-            while (elapsed < tiempoRecarga)
+            while (duracionRecarga < tiempoAjustado)
             {
-                elapsed += Time.deltaTime;
+                duracionRecarga += Time.deltaTime;
                 if (ammoSlider != null)
-                    ammoSlider.value = Mathf.Clamp01(elapsed / tiempoRecarga);
+                {
+                    ammoSlider.value = Mathf.Clamp01(duracionRecarga / tiempoRecarga);
+                }
                 yield return null;
             }
 
             // Al completar, reponer balas y resetear slider
             balasRestantes = maxBalas;
             if (ammoSlider != null)
+            {
                 ammoSlider.value = 1f;
+            }
 
             isRecargando = false;
             // Permitir disparar de nuevo

@@ -26,7 +26,7 @@ namespace Funciones.BBDD
                 return;
             }
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
         
         private void Start()

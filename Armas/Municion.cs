@@ -7,7 +7,7 @@ namespace Armas
 {
     public class Municion : MonoBehaviour
     {
-        float tiempoVida = 2.5f;
+        float tiempoVida = 1.1f;
         float gravedad = 2f;
         private Rigidbody rb;
         private bool haChocado = false;

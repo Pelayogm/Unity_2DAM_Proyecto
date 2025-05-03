@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using Armeria;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -99,14 +100,21 @@ namespace Armas
         private IEnumerator RecargarAutomatica()
         {
             isRecargando = true;
-            float elapsed = 0f;
+            
+            var arma = DataUsuario.armaActual;
+            var nivel = DataUsuario.nivelesCadencia[arma];
+            
+            var factor = 1f + nivel * 0.1f;
+            var tiempoAjustado = Mathf.Max(0.1f, tiempoRecarga / factor);
+            
+            var duracionRecarga = 0f;
 
-            // Slider muestra progreso de recarga (0 → 1)
-            while (elapsed < tiempoRecarga)
+            // Slider muestra progreso de 0 → 1 durante la recarga
+            while (duracionRecarga < tiempoAjustado)
             {
-                elapsed += Time.deltaTime;
+                duracionRecarga += Time.deltaTime;
                 if (ammoSlider != null)
-                    ammoSlider.value = Mathf.Clamp01(elapsed / tiempoRecarga);
+                    ammoSlider.value = Mathf.Clamp01(duracionRecarga / tiempoRecarga);
                 yield return null;
             }
 

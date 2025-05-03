@@ -38,6 +38,7 @@ namespace Funciones
            
            int minutes = Mathf.FloorToInt(tiempoRestante / 60);
            int seconds = Mathf.FloorToInt(tiempoRestante % 60);
+           
            temporizador.text = string.Format("{0:00}:{1:00}", minutes, seconds);
        }
        void pararPartida()

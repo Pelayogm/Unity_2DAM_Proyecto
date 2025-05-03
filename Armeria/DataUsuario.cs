@@ -46,6 +46,10 @@ namespace Armeria
         
         //Posicion del arma que tiene el jugador selccionada
         public static int armaActual;
+        
+        //FPS
+        public static int posicionSelector = 1;
+        public static int fps = 60;
 
         //Guardar los datos en el PlayerPrefs
         public static void guardarDatos()
@@ -64,6 +68,8 @@ namespace Armeria
             }
             PlayerPrefs.SetInt("ArmasCompradas" + 0, 1);
             PlayerPrefs.SetInt("Creditos", creditos);
+            PlayerPrefs.SetInt("PosicionFPS", posicionSelector);
+            PlayerPrefs.SetInt("FPS", fps);
         }
         
         
@@ -85,6 +91,9 @@ namespace Armeria
 
             armasDesbloqueadas[0] = 1;
             creditos = PlayerPrefs.GetInt("Creditos", creditos);
+            posicionSelector = PlayerPrefs.GetInt("PosicionFPS");
+            fps = PlayerPrefs.GetInt("FPS");
+
         }
         
         public static void ReiniciarDatos()
@@ -101,6 +110,9 @@ namespace Armeria
             nivelesCadencia = new [] { 1, 1, 1, 1, 1 };
             nivelesPotencia = new [] { 1, 1, 1, 1, 1 };
             nivelesSuerte = new [] { 1, 1, 1, 1, 1 };
+            posicionSelector = 1;
+            fps = 60;
+            
             guardarDatos();
         }
     }

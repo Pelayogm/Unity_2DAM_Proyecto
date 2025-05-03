@@ -15,17 +15,23 @@ namespace Funciones.Partida
         public TMP_InputField nombreJugador;
         public TextMeshProUGUI puntuacionFinalPopUp;
 
-        private static int _posicionArmaUsada = DataUsuario.armaActual;
-        private string _armaUsada = DataUsuario.nombresArmas[_posicionArmaUsada];
-
         public void volverAlMenu()
         {
             SceneManager.LoadScene("Menu2");
+            DataUsuario.armaActual = 0;
             temporizador.reanudarPartida();
         }
         
         public void guardarDatosYSalir()
         {
+            
+            int _posicionArmaUsada = DataUsuario.armaActual;
+            string _armaUsada = DataUsuario.nombresArmas[_posicionArmaUsada];
+            
+            //Herramientas de debugging
+            print("Arma usada:" + _posicionArmaUsada);
+            print("Nombre" + _armaUsada);
+            
             if (string.IsNullOrWhiteSpace(nombreJugador.text))
             {
                 nombreJugador.text = "Jugador Anónimo";

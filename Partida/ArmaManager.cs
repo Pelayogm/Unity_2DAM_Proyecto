@@ -23,6 +23,7 @@ namespace Funciones.Partida
         {
             var armaEscogida = PartidaManager.instance.armaSeleccionada;
             print(armaEscogida);
+            DataUsuario.armaActual = armaEscogida;
             if (armaEscogida >= 0 && armaEscogida < armasDeljugador.Length)
             {
                 armasDeljugador[armaEscogida].SetActive(true);
