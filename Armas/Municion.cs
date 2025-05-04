@@ -7,6 +7,7 @@ namespace Armas
 {
     public class Municion : MonoBehaviour
     {
+        [Header("Parametros de la bala")]
         float tiempoVida = 1.1f;
         float gravedad = 2f;
         private Rigidbody rb;
@@ -16,19 +17,26 @@ namespace Armas
         {
             Destroy(gameObject, tiempoVida);
         }
-
+        
         void OnCollisionEnter(Collision collision)
         {
-            
+            //Control para evitar dobles colisiones
             if (haChocado) return;
             haChocado = true;
             GetComponent<Collider>().enabled = false;
             
+            //Cogemos el nivel de potencia del arma, para multiplicarlo al valor fijo
+            //que infligimos a los enemigos.
             int arma = DataUsuario.armaActual;
             int nivelActual = DataUsuario.nivelesPotencia[arma];
             
+            //Diferenciamos las colisiones por los "tag" de los enemigos, lo que conocemos como
+            //clases.
             switch (collision.gameObject.tag)
             {
+                //Diferenciamos por el tag y cogemos su componente EnemigoDefecto donde están sus estadísticas.
+                //Y las editamos según el nivel y el tipo del enemigo.
+                //Por último eliminamos la munición, para evitar duplicaciones en la escena.
                 case "Enemigo_Pesado":
                 {
                     EnemigoDefecto estadisticasPorDefecto = collision.gameObject.GetComponent<EnemigoDefecto>();

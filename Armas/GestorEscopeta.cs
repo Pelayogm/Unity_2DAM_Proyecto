@@ -2,6 +2,7 @@
 using System.Collections;
 using Armeria;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Armas
@@ -15,17 +16,15 @@ namespace Armas
         [Header("Parámetros de disparo")]
         public float potencia = 20f;
         public float tiempoEnfriamiento = 0.8f;
-        public float dispersionAngle = 10f;
-        public int pelletsPorDisparo = 3;
 
         [Header("Cargador")]
         public int maxCartuchos = 3;
         private int cartuchosRestantes;
         public float tiempoRecarga = 5f;
-        private bool isRecargando = false;
+        private bool recargando = false;
 
         [Header("UI")]
-        public Slider ammoSlider;
+        public Slider municionSlider;
 
         [Header("Cámara del jugador")]
         public Camera playerCamera;
@@ -36,96 +35,93 @@ namespace Armas
 
         void Start()
         {
-            // Inicializar cargador y slider
+            //Copiamos las balas restantes del maximo
             cartuchosRestantes = maxCartuchos;
-            if (ammoSlider != null)
+            if (municionSlider != null)
             {
-                ammoSlider.minValue = 0f;
-                ammoSlider.maxValue = 1f;
-                ammoSlider.value = 1f;
+                //Establecemos los valores del slider
+                municionSlider.minValue = 0f;
+                municionSlider.maxValue = 1f;
+                municionSlider.value = 1f;
             }
         }
 
         void Update()
         {
-            // Si estamos recargando, dejar que la coroutine maneje el slider
-            if (isRecargando)
-                return;
+            if (recargando) return;
 
-            // En reposo, el slider refleja los cartuchos restantes
-            if (ammoSlider != null)
-                ammoSlider.value = cartuchosRestantes / (float)maxCartuchos;
+            // Actualiza la UI de munición
+            if (municionSlider != null)
+                municionSlider.value = cartuchosRestantes / (float)maxCartuchos;
 
-            // Disparo con Space, respetando enfriamiento y munición
+            // Disparo al pulsar Espacio
             if (Input.GetKeyDown(KeyCode.Space) &&
                 Time.time - ultimoDisparo >= tiempoEnfriamiento &&
                 cartuchosRestantes > 0)
             {
-                DispararEscopeta();
+                Disparar();
             }
         }
 
-        void DispararEscopeta()
+        void Disparar()
         {
             ultimoDisparo = Time.time;
             cartuchosRestantes--;
-
-            for (int i = 0; i < pelletsPorDisparo; i++)
+            
+            //Generación de una copia de la bala y su punto de aparición
+            Vector3 spawnPos = spawnPoint.position + playerCamera.transform.forward * 0.5f;
+            GameObject bala = Instantiate(proyectil, spawnPos, spawnPoint.rotation);
+            
+            // Aplicar velocidad directa sin gravedad
+            Rigidbody rb = bala.GetComponent<Rigidbody>();
+            if (rb != null)
             {
-                // Calcular una rotación aleatoria dentro del cono de dispersión
-                float yaw  = UnityEngine.Random.Range(-dispersionAngle, dispersionAngle);
-                float pitch = UnityEngine.Random.Range(-dispersionAngle, dispersionAngle);
-                Quaternion desviacion = Quaternion.Euler(pitch, yaw, 0f);
-
-                // Instanciar perdigón con desviación
-                GameObject bala = Instantiate(
-                    proyectil,
-                    spawnPoint.position,
-                    spawnPoint.rotation * desviacion
-                );
-
-                Rigidbody rb = bala.GetComponent<Rigidbody>();
-                if (rb != null)
-                {
-                    rb.useGravity = false;  // Sin caída a plomo
-                    rb.linearVelocity   = playerCamera.transform.forward * potencia;
-                }
+                //La bala no tiene gravedad para que no caiga por los valores de la masa y la potencia es la velocidad de salida
+                rb.useGravity = false;
+                rb.linearVelocity = playerCamera.transform.forward * potencia;
             }
-
+            
             disparoUsuario?.Invoke();
 
-            // Si se agotan los cartuchos, iniciar recarga automática
+            // Iniciar recarga automática si se acaba el cargador
             if (cartuchosRestantes <= 0)
-                StartCoroutine(RecargarAutomatica());
+                StartCoroutine(recargar());
         }
 
-        private IEnumerator RecargarAutomatica()
+        private IEnumerator recargar()
         {
-            isRecargando = true;
+            recargando = true;
             
+            //Buscamos el nivel de cadencia del arma actual.
             var arma = DataUsuario.armaActual;
-            var nivel = DataUsuario.nivelesCadencia[arma];
+            var nivelCadencia = DataUsuario.nivelesCadencia[arma];
             
-            var factor = 1f + nivel * 0.1f;
-            var tiempoAjustado = Mathf.Max(0.1f, tiempoRecarga / factor);
+            //Calculamos el tiempo de recarga.
+            var factorCadencia = 1f + nivelCadencia * 0.1f;
             
-            var duracionRecarga = 0f;
+            //Y al dividirlo por el tiempo de enfriamiento, al ser él dividiendo cada vez más grande, el cociente es
+            //cada vez más pequeño, por tanto, el tiempo se reduce.
+            var tiempoAjustado = Mathf.Max(0.1f, tiempoRecarga / factorCadencia);
 
-            // Slider muestra progreso de 0 → 1 durante la recarga
-            while (duracionRecarga < tiempoAjustado)
+            //Hacemos un bucle para la espera de la recarga, que durara más o menos según el resultado de la division de la 
+            //variable de tiempoAjustado
+            float duracion = 0f;
+            while (duracion < tiempoAjustado)
             {
-                duracionRecarga += Time.deltaTime;
-                if (ammoSlider != null)
-                    ammoSlider.value = Mathf.Clamp01(duracionRecarga / tiempoRecarga);
+                duracion += Time.deltaTime;
+                if (municionSlider != null)
+                    //"Clampamos" el dato, es decir le ponemos un mínimo para que no se salga de los límites.
+                    municionSlider.value = Mathf.Clamp01(duracion / tiempoRecarga);
                 yield return null;
             }
 
-            // Al completar, recargar y resetear slider
+            //Volvemos a copiar los valores de las balas
             cartuchosRestantes = maxCartuchos;
-            if (ammoSlider != null)
-                ammoSlider.value = 1f;
+            if (municionSlider != null)
+                //Ponemos el slider lleno otra vez
+                municionSlider.value = 1f;
 
-            isRecargando = false;
+            recargando = false;
         }
     }
 }

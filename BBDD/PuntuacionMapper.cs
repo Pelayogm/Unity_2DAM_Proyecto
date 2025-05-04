@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 namespace Funciones.BBDD
 {
+    //Mapper de Objeto de la BBDD a GameObject con de Unity.
     public class PuntuacionMapper : MonoBehaviour
     {
         public GameObject posicion;

@@ -36,7 +36,7 @@ namespace Armeria
         { 0, 25, 50, 110, 200 },
         { 0, 80, 130, 180, 300 }};
         
-        //Array para saberlas mejoras de las armas
+        //Array para saber las mejoras de las armas
         public static int [] nivelesCadencia = { 1, 1, 1, 1, 1 };
         public static int [] nivelesPotencia = { 1, 1, 1, 1, 1 };
         public static int [] nivelesSuerte = { 1, 1, 1, 1, 1 };

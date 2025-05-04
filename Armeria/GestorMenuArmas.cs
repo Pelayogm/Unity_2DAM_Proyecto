@@ -229,7 +229,7 @@ public void escogerArma(int posicionArma)
         DataUsuario.guardarDatos();      
         
         t_creditos.text  = DataUsuario.creditos.ToString();
-        potenciaSlider.value = DataUsuario.nivelesPotencia[arma] / 10f;
+        potenciaSlider.value = DataUsuario.armasPotencia[arma] / 10f;
         p_potencia.text  = (nivelActual + 1 <= maxNivel) ? DataUsuario.costeMejoras[arma, nivelActual + 1].ToString() : "MAX";
     }
     
@@ -258,7 +258,7 @@ public void escogerArma(int posicionArma)
         DataUsuario.guardarDatos();      
         
         t_creditos.text  = DataUsuario.creditos.ToString();
-        cadenciaSlider.value = DataUsuario.nivelesCadencia[arma] / 10f;
+        cadenciaSlider.value = DataUsuario.armasCadencia[arma] / 10f;
         p_cadencia.text  = (nivelActual + 1 <= maxNivel) ? DataUsuario.costeMejoras[arma, nivelActual + 1].ToString() : "MAX";
     }
 
@@ -288,7 +288,7 @@ public void escogerArma(int posicionArma)
         DataUsuario.guardarDatos();      
         
         t_creditos.text  = DataUsuario.creditos.ToString();
-        direccionSlider.value = DataUsuario.nivelesSuerte[arma] / 10f;
+        direccionSlider.value = DataUsuario.armasSuerte[arma] / 10f;
         p_direccion.text  = (nivelActual + 1 <= maxNivel) ? DataUsuario.costeMejoras[arma, nivelActual + 1].ToString() : "MAX";
     }
 

@@ -17,7 +17,7 @@ namespace Armas
         private float ultimoEnfriamiento;
         
         [Header("IU")]
-        public Slider recargaSlider;
+        public Slider municionSlider;
         
         [Header("Posición de la camara para calcular la dirección de la bala")]
         public Camera playerCamera;
@@ -43,7 +43,7 @@ namespace Armas
             //Actualizamos el slider con el valor calculado
             var tiempoTranscurrido = Time.time - ultimoEnfriamiento;
             //Y el valor del slider se actualiza.
-            recargaSlider.value = Mathf.Clamp01(tiempoTranscurrido / tiempoEnfriamientoAjustado);
+            municionSlider.value = Mathf.Clamp01(tiempoTranscurrido / tiempoEnfriamientoAjustado);
             
             if (Input.GetKeyDown(KeyCode.Space) && Time.time > ultimoEnfriamiento + tiempoEnfriamientoAjustado)
             {

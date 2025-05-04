@@ -2,6 +2,7 @@
 using System.Collections;
 using Armeria;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Armas
@@ -17,56 +18,62 @@ namespace Armas
         public float cadencia = 10f;
 
         [Header("Cargador")]
-        [Tooltip("Balas por cargador")]
         public int maxBalas = 15;
         private int balasRestantes;
         public float tiempoRecarga = 5f;
 
         [Header("UI")]
-        public Slider ammoSlider;
+        public Slider municionSlider;
 
         [Header("Cámara del jugador")]
         public Camera playerCamera;
         
         public static Action disparoUsuario;
 
-        private bool isRecargando = false;
+        private bool recargando = false;
         private float siguienteDisparo = 0f;
 
         void Start()
         {
+            //Copiamos las balas restantes del maximo
             balasRestantes = maxBalas;
-            if (ammoSlider != null)
+            if (municionSlider != null)
             {
-                ammoSlider.minValue = 0f;
-                ammoSlider.maxValue = 1f;
-                ammoSlider.value = 1f;
+                //Establecemos los valores del slider
+                municionSlider.minValue = 0f;
+                municionSlider.maxValue = 1f;
+                municionSlider.value = 1f;
             }
         }
 
         void Update()
         {
             // Si está recargando, dejamos que la coroutine actualice el slider
-            if (isRecargando)
+            if (recargando)
+            {
                 return;
+            }
 
             // Mientras no recarga, el slider muestra balas restantes
-            if (ammoSlider != null)
-                ammoSlider.value = balasRestantes / (float)maxBalas;
+            if (municionSlider != null)
+            {
+                municionSlider.value = balasRestantes / (float)maxBalas;
+            }
 
-            // Disparo automático manteniendo Space
+            // Disparo automático manteniendo el Espacio
             if (Input.GetKey(KeyCode.Space) && Time.time >= siguienteDisparo)
             {
+                //Mientras queden balas entramos en esta condición
                 if (balasRestantes > 0)
                 {
                     Disparar();
                     balasRestantes--;
                     siguienteDisparo = Time.time + 1f / cadencia;
 
-                    // Si se acaban, iniciar recarga
+                    // Si se acaban, iniciamos la recarga
                     if (balasRestantes <= 0)
                     {
-                        StartCoroutine(RecargarAutomatica());  
+                        StartCoroutine(Recargar());  
                     }
                         
                 }
@@ -75,47 +82,52 @@ namespace Armas
 
         void Disparar()
         {
+            //Generación de una copia de la bala y su punto de aparición
             GameObject bala = Instantiate(proyectil, spawnPoint.position, spawnPoint.rotation);
             Rigidbody rb = bala.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                rb.useGravity = false;  // trayectoria recta
+                //La bala no tiene gravedad para que no caiga por los valores de la masa y la potencia es la velocidad de salida
+                rb.useGravity = false;
                 rb.linearVelocity = playerCamera.transform.forward * potencia;
             }
             disparoUsuario?.Invoke();
         }
 
-        private IEnumerator RecargarAutomatica()
+        private IEnumerator Recargar()
         {
-            isRecargando = true;
+            recargando = true;
             
+            //Buscamos el nivel de cadencia del arma actual.
             var arma = DataUsuario.armaActual;
-            var nivel = DataUsuario.nivelesCadencia[arma];
+            var nivelCadencia = DataUsuario.nivelesCadencia[arma];
             
-            var factor = 1f + nivel * 0.1f;
-            var tiempoAjustado = Mathf.Max(0.1f, tiempoRecarga / factor);
+            //Calculamos el tiempo de recarga.
+            var factorCadencia = 1f + nivelCadencia * 0.1f;
             
-            var duracionRecarga = 0f;
+            //Y al dividirlo por el tiempo de enfriamiento, al ser él dividiendo cada vez más grande, el cociente es
+            //cada vez más pequeño, por tanto, el tiempo se reduce.
+            var tiempoAjustado = Mathf.Max(0.1f, tiempoRecarga / factorCadencia);
 
-            // Slider muestra progreso de 0 → 1 durante la recarga
-            while (duracionRecarga < tiempoAjustado)
+            //Hacemos un bucle para la espera de la recarga, que durara más o menos según el resultado de la division de la 
+            //variable de tiempoAjustado
+            float duracion = 0f;
+            while (duracion < tiempoAjustado)
             {
-                duracionRecarga += Time.deltaTime;
-                if (ammoSlider != null)
-                {
-                    ammoSlider.value = Mathf.Clamp01(duracionRecarga / tiempoRecarga);
-                }
+                duracion += Time.deltaTime;
+                if (municionSlider != null)
+                    //"Clampamos" el dato, es decir le ponemos un mínimo para que no se salga de los límites.
+                    municionSlider.value = Mathf.Clamp01(duracion / tiempoRecarga);
                 yield return null;
             }
 
-            // Al completar, reponer balas y resetear slider
+            //Volvemos a copiar los valores de las balas
             balasRestantes = maxBalas;
-            if (ammoSlider != null)
-            {
-                ammoSlider.value = 1f;
-            }
+            if (municionSlider != null)
+                //Ponemos el slider lleno otra vez
+                municionSlider.value = 1f;
 
-            isRecargando = false;
+            recargando = false;
             // Permitir disparar de nuevo
             siguienteDisparo = Time.time;
         }

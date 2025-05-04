@@ -7,10 +7,12 @@ namespace Funciones.Partida
     public class ArmaManager : MonoBehaviour
     
     {
+        [Header("UI del arma en partida")]
         public GameObject [] armasDeljugador;
         public TextMeshProUGUI nombreArma;
         public TextMeshProUGUI tipoArma;
 
+        //Recorremos todas las armas y las desactivamos todas para no ver ningún arma.
         void Awake()
         {
             for (int i = 0; i < armasDeljugador.Length; i++)
@@ -19,6 +21,9 @@ namespace Funciones.Partida
             }
         }
 
+        //Al Start() ir después del Awake() ponemos en visible el arma seleccionada,
+        //Sabemos cuál es porque lo tenemos guardado en PartidaManager.
+        //Y adaptamos el texto al arma (Nombre, tipo y clasificación del arma).
         void Start()
         {
             var armaEscogida = PartidaManager.instance.armaSeleccionada;

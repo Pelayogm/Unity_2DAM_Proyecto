@@ -6,10 +6,13 @@ using UnityEngine.UI;
 namespace Menu {
     public class ActivarPopUp : MonoBehaviour
     {
+        [Header("GameObjects de PopUps de interfaz")]
         public GameObject panelAjustes;
         public GameObject panelAjustes_2;
         public GameObject panelClasificacion;
         public GameObject tutorial;
+        
+        [Header("Animación de las olas del fondo")]
         public Animator animacion;
 
         void Start()
