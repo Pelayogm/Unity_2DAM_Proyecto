@@ -28,6 +28,11 @@ namespace Armas
 
         [Header("Cámara del jugador")]
         public Camera playerCamera;
+        
+        [Header("Sonidos")] 
+        [SerializeField] private AudioClip sonidoDisparo;
+        [SerializeField] private AudioClip sonidoRecarga;
+        private AudioSource audioSource;
 
         public static Action disparoUsuario;
 
@@ -37,6 +42,8 @@ namespace Armas
 
         void Start()
         {
+            //Cogemos el componente AudioSource
+            audioSource = GetComponent<AudioSource>();
             //Copiamos las balas restantes del máximo.
             balasRestantes = maxBalas;
             if (municionSlider != null)
@@ -83,6 +90,11 @@ namespace Armas
                     rb.useGravity = false;
                     rb.linearVelocity = playerCamera.transform.forward * potencia;
                 }
+                
+                //Le ponemos a AudioSource el sonido
+                audioSource.clip = sonidoDisparo;
+                //Ejecutamos el sonido
+                audioSource.PlayOneShot(audioSource.clip);
                 disparoUsuario?.Invoke();
 
                 balasRestantes--;
@@ -127,6 +139,10 @@ namespace Armas
                     municionSlider.value = Mathf.Clamp01(duracion / tiempoRecarga);
                 yield return null;
             }
+            //Le ponemos a AudioSource el sonido
+            audioSource.clip = sonidoRecarga;
+            //Ejecutamos el sonido
+            audioSource.PlayOneShot(audioSource.clip);
 
             //Volvemos a copiar los valores de las balas.
             balasRestantes = maxBalas;

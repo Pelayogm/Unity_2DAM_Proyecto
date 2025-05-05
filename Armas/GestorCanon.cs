@@ -25,6 +25,15 @@ namespace Armas
         [Header("Acción de disparar")]
         public static Action disparoUsuario;
 
+        [Header("Sonidos")] 
+        [SerializeField] private AudioClip sonidoDisparo;
+        private AudioSource audioSource;
+
+        private void Start()
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
+
         void Update()
         {
             //Buscamos el nivel de cadencia del arma actual.
@@ -62,10 +71,15 @@ namespace Armas
             Rigidbody rb = balaCanon.GetComponent<Rigidbody>();
             //Se le activa la gravedad para que imapcte.
             rb.useGravity = true;
+            //Le ponemos a AudioSource el sonido
+            audioSource.clip = sonidoDisparo;
+            //Ejecutamos el sonido
+            audioSource.Play();
             //El disparo depende de la posición que mira la cámara del jugador HACIA DELANTE.
             Vector3 disparo = playerCamera.transform.forward;
             //La velocidad con la que la copia de la bala sale disparada.
             rb.linearVelocity = disparo * potencia;
+            
             disparoUsuario?.Invoke();
         }
     }
