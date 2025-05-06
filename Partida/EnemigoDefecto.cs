@@ -101,14 +101,18 @@ namespace Funciones.Partida
         //Método que sirve para calcular la curación progresiva de los enemigos cuando quedan varia el comportamiento
         private IEnumerator CurarProgresivo()
         {
+            //Se calcula la vida que se va a curar en base a un número aleatorio que oscila entre 0 y el _maxPorcentajeCuracion.
             var porcentaje = UnityEngine.Random.Range(0f, _maxPorcentajeCuracion);
             var cantidadTotal = Mathf.CeilToInt(salud * porcentaje);
 
+            //Los pasos son los intervalos de cura, se calculan cuantos intervalos y cuanto se cura en cada intervalo.
             var pasos = Mathf.CeilToInt(_duracionCuracion / _intervalo);
             var porPaso = Mathf.CeilToInt((float)cantidadTotal / pasos);
 
+            //Contador para saber cuanto ya se ha curado al enemigo.
             var curadoAcumulado = 0;
 
+            //Bucle que dura hasta que acaba la curacion
             for (int i = 0; i < pasos && curadoAcumulado < cantidadTotal; i++)
             {
                 yield return new WaitForSeconds(_intervalo);
@@ -123,29 +127,43 @@ namespace Funciones.Partida
             }
         }
 
+        //Método que gestiona los impactos en el enemigo.
         public void recibirImpacto(int cantidad)
         {
+            
+            //Debug
             print(salud);
             print(cantidad);
+            
+            //Sí tiene vida el enemigo.
             if (salud > 0)
             {
+                //Le restamos de su vida el daño que quite nuestra arma.
                 salud -= cantidad;
                 
                 if (barraVida != null)
                 {
+                    //Actualizamos la barra de vida.
                     barraVida.Impactar(cantidad);
                 }
 
+                //Actualizamos la racha de tiros.
                 RachaDeTiros.Instance.impactoEnEnemigo();
+                //Recompensamos al jugador el impacto con 25 puntos.
                 PuntuacionManager.Instance.aumentarPuntuacion(25);
                 
             }
             
+            //Si el enemigo ya no tiene vida después de impacto.
             if (salud <= 0)
             {
                 //desactivar();
+                
+                //Empezamos la transición de reactivarlo.
                 StartCoroutine(reactivarEnemigo());
+                //La racha de tiros se actualiza con una eliminación.
                 RachaDeTiros.Instance.eliminacion();
+                //La puntuación aumenta en 100 puntos por la eliminación.
                 PuntuacionManager.Instance.aumentarPuntuacion(100);
             }
         }
@@ -201,6 +219,8 @@ namespace Funciones.Partida
             {
                 collider.enabled = true;
             }
+            
+            //Reactivamos las barras de vida.
             barraVida.slider.gameObject.SetActive(true);
             barraVida.slider2.gameObject.SetActive(true);
         }

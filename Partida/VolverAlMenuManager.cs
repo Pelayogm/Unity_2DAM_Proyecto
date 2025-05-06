@@ -10,8 +10,10 @@ namespace Funciones.Partida
 {
     public class VolverAlMenuManager : MonoBehaviour
     {
+        [Header("GameObject para el temporizador de la partida")]
         public Temporizador temporizador;
 
+        [Header("UI de el Pop-Up")]
         public TMP_InputField nombreJugador;
         public TextMeshProUGUI puntuacionFinalPopUp;
 

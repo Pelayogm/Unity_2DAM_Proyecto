@@ -50,6 +50,11 @@ namespace Armeria
         //FPS
         public static int posicionSelector = 1;
         public static int fps = 60;
+        
+        //Config extra
+        public static int posicionFondos = 0;
+        public static int posicionMusica = 0;
+        public static bool animacionOlas = true;
 
         //Guardar los datos en el PlayerPrefs
         public static void guardarDatos()
@@ -70,6 +75,9 @@ namespace Armeria
             PlayerPrefs.SetInt("Creditos", creditos);
             PlayerPrefs.SetInt("PosicionFPS", posicionSelector);
             PlayerPrefs.SetInt("FPS", fps);
+            PlayerPrefs.SetInt("IndiceFondo", posicionFondos);
+            PlayerPrefs.SetInt("IndiceMusica", posicionMusica);
+            PlayerPrefs.SetInt("Animacion", (animacionOlas ? 1 : 0));
         }
         
         
@@ -93,6 +101,9 @@ namespace Armeria
             creditos = PlayerPrefs.GetInt("Creditos", creditos);
             posicionSelector = PlayerPrefs.GetInt("PosicionFPS");
             fps = PlayerPrefs.GetInt("FPS");
+            posicionFondos = PlayerPrefs.GetInt("IndiceFondo");
+            posicionMusica = PlayerPrefs.GetInt("IndiceMusica");
+            animacionOlas = (PlayerPrefs.GetInt("Animacion") != 0);
 
         }
         
@@ -112,6 +123,9 @@ namespace Armeria
             nivelesSuerte = new [] { 1, 1, 1, 1, 1 };
             posicionSelector = 1;
             fps = 60;
+            posicionFondos = 0;
+            posicionMusica = 0;
+            animacionOlas = true;
             
             guardarDatos();
         }

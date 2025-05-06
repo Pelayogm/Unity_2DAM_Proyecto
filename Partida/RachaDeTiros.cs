@@ -5,19 +5,21 @@ using UnityEngine;
 
 public class RachaDeTiros : MonoBehaviour
 {
+    [Header("Variables de la racha de tiros.")]
     public int rachaActual;
     private int ultimaRachaProcesada = 0;
     float tiempoReincioRacha = 5f;
 
-    //UI
+    [Header("UI del juego.")]
     public GameObject impactoTexto;
     public GameObject eliminacionTexto;
     public GameObject rachaTextoObjeto;
     public TextMeshProUGUI rachaTexto;
 
-    // SINGLETON
+    [Header("Singleton de la racha de tiros.")]
     public static RachaDeTiros Instance { get; private set; }
 
+    //Inicializamos la instancia de la racha de tiros.
     void Awake()
     {
         if (Instance == null)
@@ -31,22 +33,35 @@ public class RachaDeTiros : MonoBehaviour
         }
     }
 
+    //Método para un impacto en un enemigo.
     public void impactoEnEnemigo()
     {
+        //Activamos el GameObject para poner texto
         impactoTexto.SetActive(true);
+        //Se llama a la transición de esperar().
+        //Es el tiempo en el que estará por pantalla con el texto de impacto.
         StartCoroutine(esperar(impactoTexto));
+        //Se aumenta el tiempo de reinicio de la racha por el impacto.
         tiempoReincioRacha += 4f;
     }
 
+    //Método para la eliminación de un enemigo.
     public void eliminacion()
     {
+        //Aumentamos el contador de eliminaciones de la racha.
         rachaActual++;
+        //Activamos el GameObject para poner texto
         eliminacionTexto.SetActive(true);
+        //Se llama a la transición de esperar().
+        //Es el tiempo en el que estará por pantalla con el texto de eliminación.
         StartCoroutine(esperar(eliminacionTexto));
-        tiempoReincioRacha += 15f;
+        //Se aumenta el tiempo de reinicio de la racha por la eliminación.
+        tiempoReincioRacha += 10f;
+        //Se comienza con la racha.
         ProcesarRacha();
     }
 
+    //Método para reiniciar la racha para volver a empezar.
     public void reiniciarRacha()
     {
         rachaActual = 0;
@@ -54,6 +69,7 @@ public class RachaDeTiros : MonoBehaviour
         tiempoReincioRacha = 0f;
     }
 
+    //Transición que mantiene el texto en pantalla 1f.
     private IEnumerator esperar(GameObject objeto)
     {
         yield return new WaitForSeconds(1f);
@@ -65,6 +81,8 @@ public class RachaDeTiros : MonoBehaviour
         // Decrementamos con independencia de fps
         tiempoReincioRacha -= Time.deltaTime;
 
+        //Con el Update() gracias a su constante actualización controlamos que la racha no 
+        //dure más de lo que deba.
         if (tiempoReincioRacha > 0f)
         {
             rachaTextoObjeto.SetActive(true);
@@ -80,8 +98,12 @@ public class RachaDeTiros : MonoBehaviour
         // Solo procesamos cada nivel de racha una vez
         if (rachaActual == ultimaRachaProcesada) return;
         ultimaRachaProcesada = rachaActual;
+        //Activamos el texto dónde se contabilizará la racha.
         rachaTextoObjeto.SetActive(true);
 
+        //Switch con las casuísticas.
+        //Según el número de la racha, se irá actualizando el texto y sumando puntuación extra
+        //por los tiros encadenados.
         switch (rachaActual)
         {
             case 0:
@@ -113,6 +135,7 @@ public class RachaDeTiros : MonoBehaviour
         }
     }
 
+    //Reinicio completo de la instancia para cuando se acaba una racha por tiempo.
     private void ResetRacha()
     {
         rachaActual = 0;
