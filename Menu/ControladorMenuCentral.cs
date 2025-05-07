@@ -40,6 +40,7 @@ namespace Funciones.Menu
             audioSource = GetComponent<AudioSource>();
             //Buscamos la primera canción y la ponemos.
             audioSource.clip = musicaAudioClips[indiceMusica];
+            audioSource.loop = true;
             audioSource.Play();
         }
         
